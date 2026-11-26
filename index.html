@@ -176,11 +176,19 @@ async function sendMessage(message) {
     );
 
     const data = await response.json();
-    return data.reply;
+
+    if (!response.ok) {
+      return data.error || "AI server error!";
+    }
+
+    return data.reply || "AI se response nahi mila.";
+
   } catch (error) {
+    console.error("Chat Error:", error);
     return "Something went wrong!";
   }
 }
+</script>
 </script>
 async function (message) {
   try {
