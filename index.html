@@ -161,7 +161,27 @@ function renderTickets(){const ts=getTickets();document.getElementById('ticketCo
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 document.getElementById('ticketForm').addEventListener('submit',e=>{e.preventDefault();const t={id:'IT-'+Date.now().toString().slice(-6),name:document.getElementById('ticketName').value.trim(),category:document.getElementById('ticketCategory').value,issue:document.getElementById('ticketIssue').value.trim(),status:'Open'};const ts=getTickets();ts.push(t);localStorage.setItem('helpdeskTickets',JSON.stringify(ts));document.getElementById('ticketMessage').textContent='Ticket created successfully! Your Ticket ID is '+t.id;document.getElementById('ticketForm').reset();renderTickets();});
 renderTickets();
-<script>
+<script><script>
+async function sendMessage(message) {
+  try {
+    const response = await fetch(
+      "https://ai-it-helpdesk-cfhg.onrender.com/chat",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: message })
+      }
+    );
+
+    const data = await response.json();
+    return data.reply;
+  } catch (error) {
+    return "Something went wrong!";
+  }
+}
+</script>
 async function sendMessage(message) {
   try {
     const response = await fetch(
