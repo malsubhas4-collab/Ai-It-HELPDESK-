@@ -153,7 +153,25 @@ if(/ip address|ip config|ethernet|dns/.test(s))return "For an IP or network conf
 if(/windows|error|update|software|install/.test(s))return "For a Windows or software issue:\\n1. Note the exact error message or code.\\n2. Restart the computer if it is safe to do so.\\n3. Check for available storage and pending updates.\\n4. Use the app's official repair or troubleshooting option.\\n5. Install software only from trusted official sources.\\nYou can create a ticket and include the error message.";
 return "Thanks for describing the issue. I can currently guide you on slow computers, Wi-Fi, printers, IP configuration and common Windows/software errors. Please add the exact error message and what you were doing when it appeared. For issues outside these examples, create a support ticket for a technician.";
 }
-function sendChat(){const input=document.getElementById('chatInput');const q=input.value.trim();if(!q)return;addMessage(q,'user');input.value='';setTimeout(()=>addMessage(responseFor(q),'bot'),250);}
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const q = input.value.trim();
+
+  if (!q) return;
+
+  addMessage(q, 'user');
+  input.value = '';
+
+  addMessage('AI is thinking...', 'bot');
+
+  const reply = await sendMessage(q);
+
+  const chatbox = document.getElementById('chatbox');
+
+  chatbox.lastElementChild.remove();
+
+  addMessage(reply || 'AI se response nahi mila.', 'bot');
+}
 function askQuick(q){showPage('assistant');document.getElementById('chatInput').value=q;sendChat();}
 function checkHealth(){const el=document.getElementById('healthResults');const ram=navigator.deviceMemory?`Approx. ${navigator.deviceMemory} GB reported`:'Not exposed by this browser';const cores=navigator.hardwareConcurrency?`${navigator.hardwareConcurrency} logical cores reported`:'Not exposed';const conn=navigator.connection?.effectiveType||'Not available';const online=navigator.onLine?'Online':'Offline';el.innerHTML=`<div class="status-row"><span>Internet status</span><b>${online}</b></div><div class="status-row"><span>Browser</span><b>${navigator.userAgent.includes('Chrome')?'Chrome-based browser': 'Browser detected'}</b></div><div class="status-row"><span>Processor information</span><b>${cores}</b></div><div class="status-row"><span>Memory information</span><b>${ram}</b></div><div class="status-row"><span>Connection type</span><b>${conn}</b></div><div class="status-row"><span>Screen resolution</span><b>${screen.width} × ${screen.height}</b></div><p class="notice">These are limited browser-reported details, not a full PC diagnostic. Exact CPU/RAM usage and disk health require a trusted local application with appropriate permissions.</p>`;}
 function getTickets(){try{return JSON.parse(localStorage.getItem('helpdeskTickets')||'[]')}catch(e){return []}}
